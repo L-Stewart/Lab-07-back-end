@@ -1,0 +1,26 @@
+{
+  "name": "city_something",
+  "version": "1.0.0",
+  "description": "server setup",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/L-Stewart/lab-06.git"
+  },
+  "author": "Lorin and Nicole",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/L-Stewart/lab-06/issues"
+  },
+  "homepage": "https://github.com/L-Stewart/lab-06#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "superagent": "^4.0.0"
+  }
+}
