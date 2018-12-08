@@ -5,11 +5,13 @@ const cors = require('cors');
 const superagent = require('superagent');
 
 // Env Variables
+
 const PORT = process.env.PORT || 3000;
 
 require('dotenv').config();
 
 // Application
+
 const app = express();
 
 app.use(cors());
@@ -29,39 +31,47 @@ function getLocation(request, response){
 }
 
 function getWeather (req, res){
-  const weatherData = searchForWeather(req.query.data)
-  res.send(weatherData);
+  return searchForWeather(req.query.data)
+    .then(weatherData => {
+      res.send(weatherData);
+    })
 }
 
 // Constructors
 
-function Daily(dayForecast){
-  this.forecast = dayForecast.summary;
-  this.time = new Date(dayForecast.time * 1000).toDateString();
-}
 function Location(location){
   this.formatted_query = location.formatted_address;
   this.latitude = location.geometry.location.lat;
   this.longitude = location.geometry.location.lng;
 }
 
+function Daily(dayForecast){
+  this.forecast = dayForecast.summary;
+  this.time = new Date(dayForecast.time * 1000).toDateString();
+}
+
 // Search for Resource
 
 function searchToLatLong(query){
-  const url = `https://maps.googleapis.com/maps/api.geocode/json?address=${query}&key${process.env.Google_Maps}`;
-  return superagent.get(url)
+  const mapUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${process.env.Google_Maps_API}`;
+  return superagent.get(mapUrl)
     .then(geoData => {
-      const location = new Location(geoData.results[0]);
+      const location = new Location(geoData.body.results[0]);
       return location;
     })
     .catch(err => console.error(err));
 }
 
 function searchForWeather(query){
-  let weatherData = require('./data/darksky.json');
-  let dailyWeatherArray = [];
-  weatherData.daily.data.forEach(forecast => dailyWeatherArray.push(new Daily(forecast)));
-  return dailyWeatherArray;
+  console.log(query)
+  const weatherUrl = `https://api.darksky.net/forecast/${process.env.Dark_Sky_API}/${query.latitude},${query.longitude}`;
+  return superagent.get(weatherUrl)
+    .then(weatherData => {
+      let dailyWeatherArray = weatherData.body.daily.data.map(forecast => new Daily(forecast));
+      console.log(dailyWeatherArray)
+      return dailyWeatherArray;
+    })
+    .catch(err => console.error(err));
 }
 
 // Error messages
