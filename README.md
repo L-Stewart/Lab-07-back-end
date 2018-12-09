@@ -15,3 +15,15 @@ Connor helped explain how toDateString works and helped us finish feature 2
 
 Lorin and Jerome LAb 7
 
+Feature 1:
+    Lorin is Driver and Jerome is Navigator
+    took 2 hours
+
+Feature 2:
+    Jerome is Driver and Lorin is Navigator
+    took 1.5 hours
+
+Feature 3:
+    Lorin is Driver and Jerome is Navigator
+    started at 5:55pm
+    
