@@ -21,6 +21,7 @@ app.use(cors());
 app.get('/location', getLocation);
 app.get('/weather', getWeather);
 app.get('/yelp', getYelp);
+app.get('/movies', getMovies);
 
 // handlers
 
@@ -44,6 +45,13 @@ function getYelp(req, res){
       res.send(searchForYelpData);
     })
 }
+
+function getMovies(req, res){
+  return searchMovies(req.query.data)
+    .then(moviesData => {
+      res.send(moviesData);
+    })
+}
 // Constructors
 
 function Location(location){
@@ -65,12 +73,23 @@ function Yelp(business) {
   this.url = business.url;
 }
 
+function Movies(flix){
+  this.title = flix.title;
+  this.overview = flix.overview;
+  this.average_votes = flix.vote_average;
+  this.total_votes = flix.vote_count;
+  this.image_url = 'https://img.tmdb.org/t/p/w500/' + flix.poster_path;
+  this.popularity = flix.popularity;
+  this.released_on = flix.release_date;
+}
+
 // Search for Resource
 
 function searchToLatLong(query){
   const mapUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${process.env.Google_Maps_API}`;
   return superagent.get(mapUrl)
     .then(geoData => {
+      console.log(geoData)
       const location = new Location(geoData.body.results[0]);
       return location;
     })
@@ -83,7 +102,6 @@ function searchForWeather(query){
   return superagent.get(weatherUrl)
     .then(weatherData => {
       let dailyWeatherArray = weatherData.body.daily.data.map(forecast => new Daily(forecast));
-      // console.log(dailyWeatherArray)
       return dailyWeatherArray;
     })
     .catch(err => console.error(err));
@@ -94,8 +112,16 @@ function searchForYelp(query){
   return superagent.get(yelpUrl)
     .set('Authorization', `Bearer ${process.env.Yelp_ApI}`)
     .then(searchForYelpData => {
-      console.log(searchForYelpData, 'heyyyyyyyyy')
       return searchForYelpData.body.businesses.map(business => new Yelp(business))
+    })
+    .catch(err => console.error(err));
+}
+
+function searchMovies(query){
+  const moviesUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.Movies_DB_API}&query=${query.short_name}`;
+  return superagent.get(moviesUrl)
+    .then(searchMoviesData => {
+      return searchMoviesData.body.results.map(films => new Movies(films))
     })
     .catch(err => console.error(err));
 }
