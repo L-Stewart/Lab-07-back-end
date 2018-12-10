@@ -58,6 +58,7 @@ function Location(location){
   this.formatted_query = location.formatted_address;
   this.latitude = location.geometry.location.lat;
   this.longitude = location.geometry.location.lng;
+  this.short_name = location.address_components[0].short_name;;
 }
 
 function Daily(dayForecast){
@@ -73,14 +74,14 @@ function Yelp(business) {
   this.url = business.url;
 }
 
-function Movies(flix){
-  this.title = flix.title;
-  this.overview = flix.overview;
-  this.average_votes = flix.vote_average;
-  this.total_votes = flix.vote_count;
-  this.image_url = 'https://img.tmdb.org/t/p/w500/' + flix.poster_path;
-  this.popularity = flix.popularity;
-  this.released_on = flix.release_date;
+function Movies(movie){
+  this.title = movie.title;
+  this.overview = movie.overview;
+  this.average_votes = movie.vote_average;
+  this.total_votes = movie.vote_count;
+  this.image_url = 'https://img.tmdb.org/t/p/w500/' + movie.poster_path;
+  this.popularity = movie.popularity;
+  this.released_on = movie.release_date;
 }
 
 // Search for Resource
@@ -118,10 +119,11 @@ function searchForYelp(query){
 }
 
 function searchMovies(query){
-  const moviesUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.Movies_DB_API}&query=${query.short_name}`;
+  const moviesUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.Movies_Db_API}&query=${query.short_name}`;
   return superagent.get(moviesUrl)
     .then(searchMoviesData => {
-      return searchMoviesData.body.results.map(films => new Movies(films))
+      console.log(searchMoviesData.body);
+      return searchMoviesData.body.results.map(movie => new Movies(movie))
     })
     .catch(err => console.error(err));
 }
