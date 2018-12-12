@@ -79,7 +79,7 @@ function Movies(movie){
   this.overview = movie.overview;
   this.average_votes = movie.vote_average;
   this.total_votes = movie.vote_count;
-  this.image_url = 'https://img.tmdb.org/t/p/w500/' + movie.poster_path;
+  this.image_url = 'https://image.tmdb.org/t/p/w200_and_h300_bestv2/' + movie.poster_path;
   this.popularity = movie.popularity;
   this.released_on = movie.release_date;
 }
@@ -90,7 +90,6 @@ function searchToLatLong(query){
   const mapUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${process.env.Google_Maps_API}`;
   return superagent.get(mapUrl)
     .then(geoData => {
-      console.log(geoData)
       const location = new Location(geoData.body.results[0]);
       return location;
     })
@@ -122,7 +121,6 @@ function searchMovies(query){
   const moviesUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.Movies_Db_API}&query=${query.short_name}`;
   return superagent.get(moviesUrl)
     .then(searchMoviesData => {
-      console.log(searchMoviesData.body);
       return searchMoviesData.body.results.map(movie => new Movies(movie))
     })
     .catch(err => console.error(err));
